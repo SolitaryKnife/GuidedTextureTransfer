@@ -16,6 +16,7 @@ def to_patches(x, *, patch_size=3, dilation=1, padding=0, stride=1):
                 batches = p
             else:
                 batches = torch.cat([batches, p], dim=0)
+            del t, p
         return batches
 
     assert isinstance(x, torch.Tensor)

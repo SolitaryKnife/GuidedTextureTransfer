@@ -212,13 +212,13 @@ class RefSR:
 
         del x_cond, patches, patches_subset
 
+        features = [None, None, None]
         for classidx in range(nclass):
             maxidx = maxidx_per_classidx[classidx]
 
             print()
             print(f"Doing classidx {classidx:02}")
 
-            features = [None, None, None]
             ratios = [1, 2, 4]
             layers = ["relu3_1", "relu2_1", "relu1_1"]
 
@@ -227,6 +227,12 @@ class RefSR:
                 print(f"Doing layer {i + 1}")
                 ratio = ratios[i]
                 layer = layers[i]
+
+                mask_seg = self.upscale_segmap(x_seg, ratio)
+                mask = S.segmap_to_mask(mask_seg, classidx).unsqueeze(0)
+                if mask.mean() == 0:
+                    print(f"Class {classidx} for size {ratio} is skipped")
+                    continue
 
                 refs_style = []
                 for ref in refs:
@@ -253,8 +259,8 @@ class RefSR:
                 if feature.dim() == 3:
                     feature = feature.unsqueeze(0)
 
-                mask_seg = self.upscale_segmap(x_seg, ratio)
-                mask = S.segmap_to_mask(mask_seg, classidx)
+                print("mask.mean()", mask.mean())
+                print("mask.size()", mask.size())
 
                 if features[i] is None:
                     features[i] = feature * mask
