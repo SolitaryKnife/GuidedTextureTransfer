@@ -87,33 +87,33 @@ def stitch(condition_size, ratio, addr, refs, patch_size=3, stride=1, patch_post
     assert isinstance(condition_size, (tuple, list))
     H, W, *_ = condition_size
 
-    print(f"CondH={H}, CondW={W}")
+    #print(f"CondH={H}, CondW={W}")
 
     if isinstance(ratio, int):
         ratio = ratio, ratio
     assert isinstance(ratio, (tuple, list))
     RH, RW, *_ = ratio
 
-    print(f"RH={RH}, RW={RW}")
+    #print(f"RH={RH}, RW={RW}")
 
     if isinstance(patch_size, int):
         patch_size = patch_size, patch_size
     assert isinstance(patch_size, (tuple, list))
     PH, PW, *_ = patch_size
-    print(f"Patch_H={PH}, Patch_W={PW}")
+    #print(f"Patch_H={PH}, Patch_W={PW}")
 
     if isinstance(stride, int):
         stride = stride, stride
     assert isinstance(stride, (tuple, list))
     SH, SW, *_ = stride
-    print(f"Stride_H={SH}, Stride_W={SW}")
+    #print(f"Stride_H={SH}, Stride_W={SW}")
 
     assert isinstance(addr, torch.Tensor)
     assert addr.dim() == 2
     device = addr.get_device()
 
     AH, AW = addr.size()
-    print(f"Addr_H={AH}, Addr_W={AW}")
+    #print(f"Addr_H={AH}, Addr_W={AW}")
 
     assert patch_postprocess is None or callable(patch_postprocess)
 
@@ -121,13 +121,13 @@ def stitch(condition_size, ratio, addr, refs, patch_size=3, stride=1, patch_post
     patches = patches.cpu() if device < 0 else patches.to(device=device)
     if patch_postprocess is not None:
         patches = patch_postprocess(patches)
-        print("Subset", patches.size())
+        #print("Subset", patches.size())
 
-    print("PatchSize", patches.size())
+    #print("PatchSize", patches.size())
 
     _, C, PH, PW = patches.size()
 
-    print(f"NewPatch_H={PH}, NewPatch_W={PW}")
+    #print(f"NewPatch_H={PH}, NewPatch_W={PW}")
 
     outputs = torch.zeros(C, H * RH, W * RH)
     outputs = outputs.cpu() if device < 0 else outputs.to(device=device)
@@ -135,8 +135,8 @@ def stitch(condition_size, ratio, addr, refs, patch_size=3, stride=1, patch_post
     counts = torch.zeros(H * RH, W * RH)
     counts = counts.cpu() if device < 0 else counts.to(device=device)
 
-    print("outputs.size", outputs.size())
-    print("counts.size", counts.size())
+    #print("outputs.size", outputs.size())
+    #print("counts.size", counts.size())
 
     for i in range(AH):
 
@@ -153,16 +153,16 @@ def stitch(condition_size, ratio, addr, refs, patch_size=3, stride=1, patch_post
                 outputs[:, i_start:i_end, j_start:j_end] += patch
                 counts[i_start:i_end, j_start:j_end] += 1.0
             except Exception as e:
-                print(f"i={i}, j={j}")
-                print("addr[i, j]", addr[i, j])
-                print(f"range_i={range(i_start, i_end)}")
-                print(f"range_j={range(j_start, j_end)}")
-                print("outputs[:, i_start:i_end, j_start:j_end].size()", outputs[:, i_start:i_end, j_start:j_end].size())
-                # print("patch.size()", patch.size())
+                #print(f"i={i}, j={j}")
+                #print("addr[i, j]", addr[i, j])
+                #print(f"range_i={range(i_start, i_end)}")
+                #print(f"range_j={range(j_start, j_end)}")
+                #print("outputs[:, i_start:i_end, j_start:j_end].size()", outputs[:, i_start:i_end, j_start:j_end].size())
+                # #print("patch.size()", patch.size())
                 raise e
 
-    print(f"last_i={i}, last_i_start={i_start}, last_i_end={i_end}")
-    print(f"last_j={j}, last_j_start={j_start}, last_j_end={j_end}")
+    #print(f"last_i={i}, last_i_start={i_start}, last_i_end={i_end}")
+    #print(f"last_j={j}, last_j_start={j_start}, last_j_end={j_end}")
     return outputs / counts.view(1, H * RH, W * RH), counts
 
 

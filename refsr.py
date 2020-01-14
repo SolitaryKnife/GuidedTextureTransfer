@@ -48,8 +48,9 @@ def get_default_vgg_model(path="models/vgg_srntt.pth", eval_mode=True, cuda=True
 
 class RefSR:
 
-    def __init__(self, sr_model, vgg_model, patch_size=3, stride=1, memsize=512):
-        self.model = sr_model
+    def __init__(self, sr_model, refsr_model, vgg_model, patch_size=3, stride=1, memsize=512):
+        self.sr_model = sr_model
+        self.refsr_model = refsr_model
         self.vgg = vgg_model
         self.patch_size = patch_size
         self.stride = stride
@@ -75,7 +76,7 @@ class RefSR:
         return x
 
     def build_sr(self, x, map256, map128, map64):
-        return self.model(x, refs=[map256, map128, map64])
+        return self.refsr_model(x, refs=[map256, map128, map64])
 
     def condition_features(self, x):
         return self.vgg(x, "relu3_1")
@@ -94,10 +95,10 @@ class RefSR:
 
     def upscale(self, x):
         x = self._assert_valid_image(x)
-        return self.model(x)
+        return self.sr_model(x)
 
     def upscale_with_ref(self, x, refs):
-        assert isinstance(refs, (list, tuple))
+        assert isinstance(refs, (list, tuple, torch.Tensor))
 
         x = self._assert_valid_image(x)
         refs = [self._assert_valid_image(ref) for ref in refs]

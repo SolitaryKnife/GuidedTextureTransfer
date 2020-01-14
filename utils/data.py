@@ -1,6 +1,11 @@
 import torch
 import torch.utils.data as data
 
+import torchvision.transforms as T
+
+from glob import glob as _glob
+from PIL import Image
+
 
 class ValueDataset(data.Dataset):
 
@@ -36,3 +41,16 @@ class ZipDataset(data.Dataset):
         if self.zip_transform is None:
             return tuple(array)
         return self.zip_transform(*array)
+
+class ImageDataset(ValueDataset):
+
+    @staticmethod
+    def glob(pathname, *, recursive=False, key=None, reverse=False):
+        return sorted(_glob(pathname, recursive=recursive), key=key, reverse=reverse)
+
+    def __init__(self, pathtemplate, transform=None, *, recursive=False, key=None, reverse=False):
+        images = ImageDataset.glob(pathtemplate, recursive=recursive, key=key, reverse=reverse)
+        super().__init__(images, T.Compose([
+            T.Lambda(lambda path: Image.open(path)),
+            transform or (lambda x: x)
+        ]))

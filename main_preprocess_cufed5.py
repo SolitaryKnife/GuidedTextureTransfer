@@ -59,8 +59,8 @@ for i, (img_hr, ref1, ref2, ref3, ref4, ref5) in enumerate(tqdm(pkg.image_datase
             patch.save(U.io.prepare_path(cache_dir, f"{i:03}", dirname, f"{j:03}.png"))
             j += 1
 
-    build_ref(ref1, "l1")
-    build_ref(ref2, "l2")
-    build_ref(ref3, "l3")
-    build_ref(ref4, "l4")
-    build_ref(ref5, "l5")
+    build_ref(ref1, "s1")
+    build_ref(ref2, "s2")
+    build_ref(ref3, "s3")
+    build_ref(ref4, "s4")
+    build_ref(ref5, "s5")
