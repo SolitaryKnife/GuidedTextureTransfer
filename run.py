@@ -30,7 +30,7 @@ transform = T.Compose([
     T.Lambda(lambda x: x.cuda().unsqueeze(0) * 255)
 ])
 
-for method in [bicubic, edsr, srgan]:
+for method in ["bicubic", "edsr", "srgan"]:
 
     print(method)
     
