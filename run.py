@@ -41,7 +41,7 @@ for method in ["bicubic", "edsr", "srgan"]:
         pass
 
     for i, img in enumerate(tqdm(U.data.ImageDataset(f"cufed5_{method}/**.png", transform))):
-        refs = U.data.ImageDataset(f"data/test/raw/CUFED5/{i:03}_*.png", transform)
+        refs = U.data.ImageDataset(f"data/test/raw/CUFED5/{i:03}_*.png", transform)[1:]
         assert len(refs) == 5
 
         y = method.upscale_with_ref(img, refs).cpu().squeeze(0)
