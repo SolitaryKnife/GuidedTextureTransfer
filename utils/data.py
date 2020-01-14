@@ -49,8 +49,8 @@ class ImageDataset(ValueDataset):
         return sorted(_glob(pathname, recursive=recursive), key=key, reverse=reverse)
 
     def __init__(self, pathtemplate, transform=None, *, recursive=False, key=None, reverse=False):
-        images = ImageDataset.glob(pathtemplate, recursive=recursive, key=key, reverse=reverse)
-        super().__init__(images, T.Compose([
+        imgpaths = ImageDataset.glob(pathtemplate, recursive=recursive, key=key, reverse=reverse)
+        super().__init__(imgpaths, T.Compose([
             T.Lambda(lambda path: Image.open(path)),
             transform or (lambda x: x)
         ]))

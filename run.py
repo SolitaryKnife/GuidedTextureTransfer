@@ -23,7 +23,7 @@ import os
 is_cuda=True
 refsr_model = refsr.get_default_sr_model(cuda=is_cuda)
 vgg_model = refsr.get_default_vgg_model(cuda=is_cuda)
-method = refsr.RefSR(refsr_model, refsr_model, vgg_model)
+approach = refsr.RefSR(refsr_model, refsr_model, vgg_model)
 
 transform = T.Compose([
     T.ToTensor(),
@@ -41,10 +41,10 @@ for method in ["bicubic", "edsr", "srgan"]:
         pass
 
     for i, img in enumerate(tqdm(U.data.ImageDataset(f"cufed5_{method}/**.png", transform))):
-        refs = U.data.ImageDataset(f"data/test/raw/CUFED5/{i:03}_*.png", transform)[1:]
+        refs = list(U.data.ImageDataset(f"data/test/raw/CUFED5/{i:03}_*.png", transform))[1:]
         assert len(refs) == 5
 
-        y = method.upscale_with_ref(img, refs).cpu().squeeze(0)
+        y = approach.upscale_with_ref(img, refs).cpu().squeeze(0)
 
 
         img_big = TF.to_pil_image(y / 255)
